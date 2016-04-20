@@ -12,9 +12,12 @@ router.post('/', function(req, res){
       var result = [];
       var name = req.body.name;
       var address = req.body.address;
+      var city = req.body.city;
+      var state= req.body.state;
+      var zip_code= req.body.zip_code;
 
-      var query = client.query('INSERT INTO people (name, address) VALUES ($1, $2) ' +
-                                'RETURNING id, name, address', [name, address]);
+      var query = client.query('INSERT INTO people (name, address, city, state, zip_code) VALUES ($1, $2, $3, $4, $5) ' +
+                                'RETURNING id, name, address, city, state, zip_code', [name, address, city, state, zip_code]);
 
       query.on('row', function(row){
         result.push(row);
@@ -33,5 +36,34 @@ router.post('/', function(req, res){
     }
   });
 });
+router.get('/', function(req, res){
+  pg.connect(connectionString, function(err, client, done){
+    if(err){
+
+  console.log(err);
+  res.sendStatus(500);
+    } else {
+      var query = client.query('SELECT * FROM people');
+      var results = [];
+
+      query.on('error', function(error){
+        console.log(error);
+        done();
+        res.sendStatus(500);
+      });
+
+      query.on('row', function(rowData){
+        results.push(rowData);
+
+      });
+
+      query.on('end', function(){
+        res.send(results);
+        done();
+      });
+    }
+  });
+});
+
 
 module.exports = router;

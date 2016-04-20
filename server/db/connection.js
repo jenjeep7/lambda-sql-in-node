@@ -6,7 +6,7 @@ if (process.env.DATABASE_URL) {
   pg.defaults.ssl = true;
   connectionString = process.env.DATABASE_URL;
 } else {
-  connectionString = 'postgres://localhost:5432/tuesday';
+  connectionString = 'postgres://localhost:5432/sqlForm';
 }
 
 function initializeDB(){
@@ -15,10 +15,13 @@ function initializeDB(){
       console.log('Error connecting to DB!', err);
       process.exit(1);
     } else {
-      var query = client.query('CREATE TABLE IF NOT EXISTS people (' +
+      var query = client.query('CREATE TABLE IF NOT EXISTS people(' +
       'id SERIAL PRIMARY KEY,' +
-      'name varchar(80) NOT NULL,' +
-      'address text);');
+      'name varchar(225) NOT NULL,' +
+      'address varchar(225) NOT NULL,'+
+      'city varchar(100) NOT NULL,' +
+      'state varchar(3) NOT NULL,' +
+      'zip_code varchar(5))');
 
       query.on('end', function(){
         console.log('Successfully ensured schema exists');
